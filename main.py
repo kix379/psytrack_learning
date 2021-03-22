@@ -102,8 +102,9 @@ sep_plot(wMode, W_std, weights,[0,800], [-30,30], SPATH+img_filename)
 #perform_cross_validation(outData,700,hyper_guess,weights,optList,5,img_filename+'_trimmed_')
 
 #plot with dprime, bcc, criterion
+window=50
 datapath = 'C:\\Users\\Cognition-Lab\\Documents\\Kruttika_files\\Data\\BhartiData\\Priya\\freeform\\'
-feedback_data = scipy.io.loadmat(datapath + 'feedback_vals_window_50.mat')
+feedback_data = scipy.io.loadmat(datapath + 'feedback_vals_window_'+str(window)+'.mat')
 feedback_vals = np.array(feedback_data['feedback_vals']);
 left_dprime=feedback_vals[:,0];
 left_c=feedback_vals[:,1];
@@ -128,7 +129,7 @@ params_2={
 	'ylim': [-1.5,4.5],
 	'ylabel': 'd\''
 }
-plot_weights_behavior(wMode,weights,params_1,params_2,100,SPATH+img_filename+'_dprime_probed_ch.png')
+plot_weights_behavior(wMode,weights,params_1,params_2,100,SPATH+img_filename+'_dprime_probed_ch_window_'+str(window)+'.png')
 
 params_1={
 	'line_1_index':0,
@@ -145,7 +146,7 @@ params_2={
 	'ylim': [-2,2.5],
 	'ylabel': 'bcc'
 }
-plot_weights_behavior(wMode,weights,params_1,params_2,100,SPATH+img_filename+'_bcc_probe.png')
+plot_weights_behavior(wMode,weights,params_1,params_2,100,SPATH+img_filename+'_bcc_probe_window_'+str(window)+'.png')
 
 params_2={
 	'line_1':left_c,
@@ -156,4 +157,4 @@ params_2={
 	'ylim': [-2,2.5],
 	'ylabel': 'criterion'
 }
-plot_weights_behavior(wMode,weights,params_1,params_2,100,SPATH+img_filename+'_criterion_probe.png')
+plot_weights_behavior(wMode,weights,params_1,params_2,100,SPATH+img_filename+'_criterion_window_'+str(window)+'.png')
