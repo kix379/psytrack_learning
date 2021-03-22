@@ -10,7 +10,7 @@ from construct_input import *
 from plotting_functions import *
 
 
-def perform_cross_validation(outData,length,hyper_guess,weights,optList,k,img_filename):
+def perform_cross_validation(outData,length,hyper_guess,weights,optList,k,img_filename,title):
 	#trim the data if you're performing cross validation
 	new_D = psy.trim(outData, END=length)
 	hyp, evd, wMode, hess_info = psy.hyperOpt(new_D, hyper_guess, weights, optList)
@@ -21,7 +21,7 @@ def perform_cross_validation(outData,length,hyper_guess,weights,optList,k,img_fi
 	W_std=hess_info['W_std']
 
 	#plotting the weights
-	sep_plot(wMode, W_std, weights,[0,800], [-3.5,5], SPATH+img_filename+'.png')
+	sep_plot(wMode, W_std, weights,[0,360], [-30,30], SPATH+img_filename+'.png',title)
 
 	fig_perf_xval = psy.plot_performance(new_D, xval_pL=xval_pL)
 	fig_bias_xval = psy.plot_bias(new_D, xval_pL=xval_pL)
@@ -66,16 +66,16 @@ sub_data["trial_num"]=indices
 sub_data=sub_data.reset_index(drop=True)
 
 # add previous response as a variable, comment this out if not used
-"""
+
 sub_data["prev_resp"]=np.nan
 sub_data.loc[1:,"prev_resp"]=sub_data["response"][:-1].to_numpy()
 # trim off the first trial
 sub_data=sub_data.iloc[1:,:]
 sub_data=sub_data.reset_index(drop=True)
-"""
+
 
 # Modify weights based on which function is used for constructing the input
-outData, weights = getData_4(sub_data)
+outData, weights = getData_prevresp(sub_data)
 K = np.sum([weights[i] for i in weights.keys()])
 print(outData, weights)
 
@@ -88,7 +88,7 @@ hyper_guess = {
 optList = ['sigma']
 
 #main function to get the weights
-hyp, evd, wMode, hess_info = psy.hyperOpt(outData, hyper_guess, weights, optList)
+hyp, evd, wMode, hess_info = psy.hyperOpt(outData, hyper_guess, weights, optList, showOpt=1)
 W_std=hess_info['W_std']
 # Uncomment to save interim result
 #filename='data'
@@ -96,15 +96,15 @@ W_std=hess_info['W_std']
 #np.savez_compressed(SPATH+filename, dat=dat)
 
 #plotting the weights
-img_filename='freeform_4_input_sigma_5'
-sep_plot(wMode, W_std, weights,[0,800], [-30,30], SPATH+img_filename)
+img_filename='freeform_4_input_prevresp_sigma_5'
+standard_plot(wMode, W_std, weights,[0,400], [-30,30], SPATH+img_filename, 'Subject 1 Freeform')
 
-#perform_cross_validation(outData,700,hyper_guess,weights,optList,5,img_filename+'_trimmed_')
+#perform_cross_validation(outData,350,hyper_guess,weights,optList,5,img_filename+'_trimmed_', 'Subject 2 EQFB 350 trials')
 
 #plot with dprime, bcc, criterion
+
 window=50
-datapath = 'C:\\Users\\Cognition-Lab\\Documents\\Kruttika_files\\Data\\BhartiData\\Priya\\freeform\\'
-feedback_data = scipy.io.loadmat(datapath + 'feedback_vals_window_'+str(window)+'.mat')
+feedback_data = scipy.io.loadmat(datapath + '\\freeform\\feedback_vals_window_'+str(window)+'.mat')
 feedback_vals = np.array(feedback_data['feedback_vals']);
 left_dprime=feedback_vals[:,0];
 left_c=feedback_vals[:,1];
@@ -115,8 +115,8 @@ right_bcc=feedback_vals[:,5];
 trial_num=np.array(feedback_data['trial_num']);
 
 params_1={
-	'line_1_index':2,
-	'line_2_index':3,
+	'line_1_index':3,
+	'line_2_index':4,
 	'xlim': [0,800],
 	'ylim': [-30,30]
 }
@@ -129,11 +129,11 @@ params_2={
 	'ylim': [-1.5,4.5],
 	'ylabel': 'd\''
 }
-plot_weights_behavior(wMode,weights,params_1,params_2,100,SPATH+img_filename+'_dprime_probed_ch_window_'+str(window)+'.png')
+plot_weights_behavior(wMode,weights,params_1,params_2,50,SPATH+img_filename+'_dprime_probed_ch_window_'+str(window)+'.png','Subject 1 Freeform')
 
 params_1={
-	'line_1_index':0,
-	'line_2_index':1,
+	'line_1_index':1,
+	'line_2_index':2,
 	'xlim': [0,800],
 	'ylim': [-30,30]
 }
@@ -146,7 +146,7 @@ params_2={
 	'ylim': [-2,2.5],
 	'ylabel': 'bcc'
 }
-plot_weights_behavior(wMode,weights,params_1,params_2,100,SPATH+img_filename+'_bcc_probe_window_'+str(window)+'.png')
+plot_weights_behavior(wMode,weights,params_1,params_2,50,SPATH+img_filename+'_bcc_probe_window_'+str(window)+'.png','Subject 1 Freeform')
 
 params_2={
 	'line_1':left_c,
@@ -157,4 +157,4 @@ params_2={
 	'ylim': [-2,2.5],
 	'ylabel': 'criterion'
 }
-plot_weights_behavior(wMode,weights,params_1,params_2,100,SPATH+img_filename+'_criterion_window_'+str(window)+'.png')
+plot_weights_behavior(wMode,weights,params_1,params_2,50,SPATH+img_filename+'_criterion_window_'+str(window)+'.png','Subject 1 Freeform')

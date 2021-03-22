@@ -111,5 +111,7 @@ def getData_prevresp(sub_data):
         probL=np.array(sub_data['probL']),
         y = np.array(sub_data['response'])
     )
+
+    weights = {'prev_resp' : 1, 'probed_Ch_L' : 1, 'probed_Ch_R' : 1, 'probe_L' : 1, 'probe_R' : 1}
     
-    return dat        
+    return dat, weights        

@@ -3,13 +3,13 @@ import numpy as np
 import scipy.io
 from matplotlib.patches import ConnectionPatch
 
-def standard_plot(wMode, W_std, weights, xlim, ylim, filename):
+def standard_plot(wMode, W_std, weights, xlim, ylim, filename,title):
 	plt.figure(figsize=(8,4))
 	ax = plt.gca()
 	for i in range(wMode.shape[0]):
 		color = next(ax._get_lines.prop_cycler)['color']
-		plt.plot(wMode[i], lw=1, linestyle='-', alpha=0.85, zorder=2*i+1, color=color)
-		plt.fill_between(np.arange(len(wMode[i])), wMode[i] - 2 * W_std[i], wMode[i] + 2 * W_std[i], facecolor=color, alpha=0.2, zorder=2*i)
+		plt.plot(wMode[i], lw=1, linestyle='-', zorder=2*i+1, color=color)
+		#plt.fill_between(np.arange(len(wMode[i])), wMode[i] - 2 * W_std[i], wMode[i] + 2 * W_std[i], facecolor=color, alpha=0.2, zorder=2*i)
 	plt.axhline(0, color="black", linestyle="--", lw=0.5, alpha=0.5, zorder=0)
 	plt.xticks(50*np.arange(0,xlim[1]/50 + 1))
 	plt.yticks(np.arange(-2,3,2))
@@ -21,11 +21,12 @@ def standard_plot(wMode, W_std, weights, xlim, ylim, filename):
 	plt.xlabel("trials")
 	plt.ylabel("weights")
 	legendNames=  sorted(weights)
-	plt.legend(legendNames, loc ="lower right") 
+	plt.legend(legendNames, loc ="lower right")
+	plt.title(title) 
 	plt.savefig(filename+'.png')
 	plt.show()
 
-def sep_plot(wMode, W_std, weights, xlim, ylim, filename):
+def sep_plot(wMode, W_std, weights, xlim, ylim, filename, title):
 	
 	legendNames=  sorted(weights)
 	plt.figure(figsize=(8,12))
@@ -49,11 +50,12 @@ def sep_plot(wMode, W_std, weights, xlim, ylim, filename):
 			plt.ylabel("weights")
 			plt.legend(loc ="lower right") 
 
+	plt.title(title)
 	plt.savefig(filename+'.png')
 	plt.show()
 
 #plot dprime and probed_ch
-def plot_weights_behavior(wMode,weights,params_1,params_2,step,img_filename):
+def plot_weights_behavior(wMode,weights,params_1,params_2,step,img_filename,title):
 	fig = plt.figure(figsize=(10,5))
 	ax1 = fig.add_subplot(211)
 	ax2 = fig.add_subplot(212)
@@ -85,7 +87,7 @@ def plot_weights_behavior(wMode,weights,params_1,params_2,step,img_filename):
 	for i in np.arange(step,xlim[1],step):
 		con = ConnectionPatch(xyA=(i,params_2['ylim'][0]), xyB=(i,params_1['ylim'][1]), coordsA="data", coordsB="data",axesA=ax2, axesB=ax1, color="black", linestyle='--', alpha=0.5)
 		ax2.add_artist(con)
-    
+	fig.suptitle(title)
 	plt.savefig(img_filename)    
 
 
