@@ -21,7 +21,7 @@ def perform_cross_validation(outData,length,hyper_guess,weights,optList,k,img_fi
 	W_std=hess_info['W_std']
 
 	#plotting the weights
-	standard_plot(wMode, W_std, weights,[0,360], [-3,3], SPATH+img_filename+'.png')
+	sep_plot(wMode, W_std, weights,[0,800], [-3.5,5], SPATH+img_filename+'.png')
 
 	fig_perf_xval = psy.plot_performance(new_D, xval_pL=xval_pL)
 	fig_bias_xval = psy.plot_bias(new_D, xval_pL=xval_pL)
@@ -35,7 +35,7 @@ SPATH = "C:\\Users\\Cognition-Lab\\Documents\\Kruttika_files\\Code_python\\Figur
 datapath = 'C:\\Users\\Cognition-Lab\\Documents\\Kruttika_files\\Data\\BhartiData\\Priya'
 
 #Load data
-Bharti_data = scipy.io.loadmat(datapath + '\\sub_001_eqfb.mat')
+Bharti_data = scipy.io.loadmat(datapath + '\\sub_001_freeform.mat')
 
 if not os.path.exists(SPATH):
     os.makedirs(SPATH)
@@ -75,13 +75,13 @@ sub_data=sub_data.reset_index(drop=True)
 """
 
 # Modify weights based on which function is used for constructing the input
-outData, weights = getData_6(sub_data)
+outData, weights = getData_4(sub_data)
 K = np.sum([weights[i] for i in weights.keys()])
 print(outData, weights)
 
 #Modify the initial sigma as required
 hyper_guess = {
- 'sigma'   : [2**-5]*K,
+ 'sigma'   : [2**5]*K,
  'sigInit' : 2**5,
  'sigDay'  : None
   }
@@ -96,8 +96,64 @@ W_std=hess_info['W_std']
 #np.savez_compressed(SPATH+filename, dat=dat)
 
 #plotting the weights
-img_filename='eqfb_6_input_sigma_-5'
-standard_plot(wMode, W_std, weights,[0,360], [-3.5,3.5], SPATH+img_filename+'_all')
-sep_plot(wMode, W_std, weights,[0,360], [-3.5,3.5], SPATH+img_filename+'_sep')
+img_filename='freeform_4_input_sigma_5'
+sep_plot(wMode, W_std, weights,[0,800], [-30,30], SPATH+img_filename)
 
-#perform_cross_validation(outData,350,hyper_guess,weights,optList,5,img_filename+'_trimmed_')
+#perform_cross_validation(outData,700,hyper_guess,weights,optList,5,img_filename+'_trimmed_')
+
+#plot with dprime, bcc, criterion
+datapath = 'C:\\Users\\Cognition-Lab\\Documents\\Kruttika_files\\Data\\BhartiData\\Priya\\freeform\\'
+feedback_data = scipy.io.loadmat(datapath + 'feedback_vals_window_50.mat')
+feedback_vals = np.array(feedback_data['feedback_vals']);
+left_dprime=feedback_vals[:,0];
+left_c=feedback_vals[:,1];
+left_bcc=feedback_vals[:,2];
+right_dprime=feedback_vals[:,3];
+right_c=feedback_vals[:,4];
+right_bcc=feedback_vals[:,5];
+trial_num=np.array(feedback_data['trial_num']);
+
+params_1={
+	'line_1_index':2,
+	'line_2_index':3,
+	'xlim': [0,800],
+	'ylim': [-30,30]
+}
+params_2={
+	'line_1':left_dprime,
+	'line_2':right_dprime,
+	'label_1':'dprime_left',
+	'label_2':'dprime_right',
+	'x-axis':trial_num,
+	'ylim': [-1.5,4.5],
+	'ylabel': 'd\''
+}
+plot_weights_behavior(wMode,weights,params_1,params_2,100,SPATH+img_filename+'_dprime_probed_ch.png')
+
+params_1={
+	'line_1_index':0,
+	'line_2_index':1,
+	'xlim': [0,800],
+	'ylim': [-30,30]
+}
+params_2={
+	'line_1':left_bcc,
+	'line_2':right_bcc,
+	'label_1':'bcc_left',
+	'label_2':'bcc_right',
+	'x-axis':trial_num,
+	'ylim': [-2,2.5],
+	'ylabel': 'bcc'
+}
+plot_weights_behavior(wMode,weights,params_1,params_2,100,SPATH+img_filename+'_bcc_probe.png')
+
+params_2={
+	'line_1':left_c,
+	'line_2':right_c,
+	'label_1':'criterion_left',
+	'label_2':'criterion_right',
+	'x-axis':trial_num,
+	'ylim': [-2,2.5],
+	'ylabel': 'criterion'
+}
+plot_weights_behavior(wMode,weights,params_1,params_2,100,SPATH+img_filename+'_criterion_probe.png')
