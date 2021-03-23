@@ -1,6 +1,56 @@
 import numpy as np
+import pandas as pd
 
-def getData_2(sub_data):
+def getSubjectData(Data,addPrev):
+    CData = np.array(Data['CData'])
+    sub_data = pd.DataFrame()
+
+    sub_data['probe']        = CData[:,10] # -1: L, 1: R
+    sub_data['response']     = CData[:,11] #  1: Ch, 0: N-Ch, 5: response not recorded
+    sub_data['RT']           = CData[:,12] #  response time
+    # Additional fields :
+    sub_data["correct"] =   CData[:,13]
+    sub_data["answer"] =   CData[:,14]
+    sub_data["probed_Ch"] =  CData[:,17] + CData[:,18]
+    sub_data["unprobed_Ch"] =  CData[:,15] + CData[:,16]
+    sub_data["unprobed_Ch_L"] = CData[:,15]
+    sub_data["unprobed_Ch_R"] = CData[:,16]
+    sub_data["probed_Ch_L"] = CData[:,17]
+    sub_data["probed_Ch_R"] = CData[:,18]
+    sub_data["probe_L"] = CData[:,19]
+    sub_data["probe_R"] = CData[:,20]
+    sub_data["probL"] = CData[:,21] #probability of left side cue
+
+    # dump mistrials
+    indices = np.where(sub_data['response'] != 5)[0].tolist()
+    sub_data=sub_data.iloc[indices,:]        
+    sub_data["trial_num"]=indices
+    sub_data=sub_data.reset_index(drop=True)
+
+    # add previous response as a variable, comment this out if not used
+    if addPrev==1:
+        sub_data["prev_resp"]=np.nan
+        sub_data.loc[1:,"prev_resp"]=sub_data["response"][:-1].to_numpy()
+        # trim off the first trial
+        sub_data=sub_data.iloc[1:,:]
+        sub_data=sub_data.reset_index(drop=True)
+
+    return sub_data 
+
+
+def getData(sub_data,num):
+    if num=='3':
+        dat,weights=getData_3(sub_data)
+    elif num=='4':
+        dat,weights=getData_4(sub_data)    
+    elif num=='prevresp':
+        dat,weights=getData_prevresp(sub_data)    
+    elif num=='6':
+        dat,weights=getData_6(sub_data)    
+
+    return dat, weights    
+
+def getData_3(sub_data):
 
     
     inputs = dict(

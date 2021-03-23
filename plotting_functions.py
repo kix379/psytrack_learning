@@ -54,6 +54,65 @@ def sep_plot(wMode, W_std, weights, xlim, ylim, filename, title):
 	plt.savefig(filename+'.png')
 	plt.show()
 
+def to_plot_behavior(feedback_data,indices,xlim_val,ylim_val,wMode,weights,step,SPATH,img_filename,window,img_title):
+	#plot with dprime, bcc, criterion
+	feedback_vals = np.array(feedback_data['feedback_vals']);
+	left_dprime=feedback_vals[:,0];
+	left_c=feedback_vals[:,1];
+	left_bcc=feedback_vals[:,2];
+	right_dprime=feedback_vals[:,3];
+	right_c=feedback_vals[:,4];
+	right_bcc=feedback_vals[:,5];
+	trial_num=np.array(feedback_data['trial_num']);
+
+
+	params_1={
+		'line_1_index':indices['probe_Ch_L'],
+		'line_2_index':indices['probe_Ch_R'],
+		'xlim': [0,xlim_val],
+		'ylim': [-ylim_val,ylim_val]
+	}
+
+	params_2={
+		'line_1':left_dprime,
+		'line_2':right_dprime,
+		'label_1':'dprime_left',
+		'label_2':'dprime_right',
+		'x-axis':trial_num,
+		'ylim': [-1.5,4.5],
+		'ylabel': 'd\''
+	}
+	plot_weights_behavior(wMode,weights,params_1,params_2,step,SPATH+img_filename+'_dprime_probed_ch_window_'+str(window)+'.png',img_title)
+
+	params_1={
+		'line_1_index':indices['probe_L'],
+		'line_2_index':indices['probe_R'],
+		'xlim': [0,xlim_val],
+		'ylim': [-ylim_val,ylim_val]
+	}
+	params_2={
+		'line_1':left_bcc,
+		'line_2':right_bcc,
+		'label_1':'bcc_left',
+		'label_2':'bcc_right',
+		'x-axis':trial_num,
+		'ylim': [-2,2.5],
+		'ylabel': 'bcc'
+	}
+	plot_weights_behavior(wMode,weights,params_1,params_2,step,SPATH+img_filename+'_bcc_probe_window_'+str(window)+'.png','Subject 2 EQFB')
+
+	params_2={
+		'line_1':left_c,
+		'line_2':right_c,
+		'label_1':'criterion_left',
+		'label_2':'criterion_right',
+		'x-axis':trial_num,
+		'ylim': [-2,2.5],
+		'ylabel': 'criterion'
+	}
+	plot_weights_behavior(wMode,weights,params_1,params_2,step,SPATH+img_filename+'_criterion_window_'+str(window)+'.png','Subject 2 EQFB')
+
+
 #plot dprime and probed_ch
 def plot_weights_behavior(wMode,weights,params_1,params_2,step,img_filename,title):
 	fig = plt.figure(figsize=(10,5))
