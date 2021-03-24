@@ -22,3 +22,13 @@ def perform_cross_validation(outData,length,hyper_guess,weights,optList,k,num_va
 
 	fig_perf_xval.savefig(img_filename+'_'+str(k)+'fold_performance.png')
 	fig_bias_xval.savefig(img_filename+'_'+str(k)+'fold_bias.png')
+	return xval_logli
+
+def compute_ic(evd,hyp,wMode,n):
+	T=wMode[0].size     	#number of trials
+	E=evd 					#log-evidence or log-likelihood
+	K=len(hyp['sigma']) 	#number of hyperparameters
+	print('T=%d, E=%f, K=%d' % (T,E,K))
+	aic= (-2/T * E) + (2 * K/T)
+	bic= (-2*E) + (np.log(T) * K)
+	return round(aic,n), round(bic,n)

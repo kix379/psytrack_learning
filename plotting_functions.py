@@ -94,7 +94,7 @@ def to_plot_behavior(feedback_data,indices,xlim_val,ylim_val,wMode,weights,step,
 		'xlim': [0,xlim_val],
 		'ylim': [-ylim_val,ylim_val]
 	}
-	
+	"""
 	params_2={
 		'line_1':left_bcc,
 		'line_2':right_bcc,
@@ -105,7 +105,7 @@ def to_plot_behavior(feedback_data,indices,xlim_val,ylim_val,wMode,weights,step,
 		'ylabel': 'bcc'
 	}
 	plot_weights_behavior(wMode,weights,params_1,params_2,window,step,SPATH+img_filename+'_bcc_probe_window_'+str(window)+'.png',img_title)
-	
+	"""
 	#for criterion, take negative of the weights in order to be able to compare
 	params_2={
 		'line_1':left_c,
