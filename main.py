@@ -56,9 +56,9 @@ for t in range(wMode[0].size):
 	gw.append(g[t] @ wMode[:, t])
 
 pL=1 / (1 + np.exp(gw)) #P(y=0)
-y_pred=np.round(1-pL) #P(y=1)
-
-
+#y_pred=np.round(1-pL) #P(y=1)
+y_pred=((-np.sign(pL - 0.5) + 1)/2).astype(int)
+est_correct = np.abs(pL - 0.5) + 0.5 #will give the probability that it is 0 if pL>0.5 and probability that it is 1 if pL<0.5 (becomes 1-pL)
 
 #construct contingency table
 datapath = 'C:\\Users\\Cognition-Lab\\Documents\\Kruttika_files\\Data\\AttentionalLearningData\\subject00'+str(subject_num)	
@@ -76,8 +76,9 @@ print(wMode[:,:5])
 print(gw[:5])
 print(y_pred[:5])
 print(y_act[:5])
+print(est_correct[:5])
 
-print(y_pred.sort()==y_act.sort())
+print(np.array_equal(np.array(y_pred),np.array(y_act)))
 feedback_vals_act=[];
 trial_num=[];
 step=5;
@@ -135,7 +136,7 @@ ax2.set(xlabel='trial', ylabel='right side d\'', xticks=50*np.arange(0,xlim[1]/5
 ax2.legend(loc ="upper right")
 
 plt.show()
-"""
+
 
 
 
